@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,10 +13,12 @@ public class Node {
     private Blockchain blockchain = new Blockchain();
     private Set<String> peers = new HashSet<>();
     private int port;
+    private String ipAddress;
     private ServerSocket serverSocket;
 
     public Node(int port) {
         this.port = port;
+        this.ipAddress = getLocalIpAddress();
     }
 
     public void start() {
@@ -27,7 +29,7 @@ public class Node {
     private void startServer() {
         try {
             serverSocket = new ServerSocket(port);
-            System.out.println("Node started on port: " + port);
+            System.out.println("Node started on IP: " + ipAddress + " Port: " + port);
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
@@ -121,5 +123,28 @@ public class Node {
 
     public void addPeer(String peer) {
         peers.add(peer);
+    }
+
+
+    private String getLocalIpAddress() {
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = interfaces.nextElement();
+                if (networkInterface.isLoopback() || !networkInterface.isUp()) {
+                    continue;
+                }
+                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress inetAddress = addresses.nextElement();
+                    if (inetAddress.isSiteLocalAddress()) {
+                        return inetAddress.getHostAddress();
+                    }
+                }
+            }
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+        return "127.0.0.1"; // Fallback to localhost if no address found
     }
 }
