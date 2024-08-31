@@ -33,7 +33,12 @@ public class Node {
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                new Thread(() -> handleClient(clientSocket)).start();
+                String clientIp = clientSocket.getInetAddress().getHostAddress();
+                int clientPort = clientSocket.getPort();
+                System.out.println("New node joined from IP: " + clientIp + " Port: " + clientPort);
+
+                // You can handle the connection here, e.g., in a new thread
+                handleClient(clientSocket);
             }
         } catch (IOException e) {
             e.printStackTrace();
