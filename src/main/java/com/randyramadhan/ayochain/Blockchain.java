@@ -15,9 +15,10 @@ public class Blockchain {
         return new Block("Genesis Block", "0");
     }
 
-    public synchronized void addBlock(Block newBlock) {
+    public synchronized boolean addBlock(Block newBlock) {
         newBlock.mineBlock(difficulty);
         blockchain.add(newBlock);
+        return true;
     }
 
     public synchronized boolean isChainValid() {

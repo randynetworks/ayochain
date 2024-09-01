@@ -8,7 +8,9 @@ import org.springframework.context.annotation.Configuration;
 public class NodeConfig {
 
     @Bean
-    public Node node(@Value("${node.port}") int port) {
-        return new Node(port);
+    public Node node(@Value("${node.port}") int port,
+                     @Value("${bootstrap.node.ip}") String bootstrapNodeIp,
+                     @Value("${bootstrap.node.port}") int bootstrapNodePort) {
+        return new Node(port, bootstrapNodeIp, bootstrapNodePort);
     }
 }
